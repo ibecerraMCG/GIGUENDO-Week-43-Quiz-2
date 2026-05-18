@@ -1,0 +1,1321 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 43 Practice Quiz 2</title>
+
+    <style>
+        /* --- CSS Variables & Themes --- */
+        :root {
+            --transition-speed: 0.3s;
+            --font-main: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            
+            /* Default Feedback Colors (Fallback for custom themes) */
+            --feedback-success-bg: #064e3b;
+            --feedback-success-border: #059669;
+            --feedback-success-text: #a7f3d0;
+            --feedback-error-bg: #7f1d1d;
+            --feedback-error-border: #dc2626;
+            --feedback-error-text: #fecaca;
+        }
+
+        [data-theme="dark"] {
+            --bg-body: #1e293b; --bg-card: #334155; --bg-header: #0f172a;
+            --text-main: #f1f5f9; --text-muted: #94a3b8; --text-accent: #38bdf8;
+            --border-color: #475569; --highlight-bg: #475569;
+            --button-bg: #38bdf8; --button-text: #0f172a; --button-hover: #0ea5e9;
+        }
+
+        [data-theme="light"] {
+            --bg-body: #f3f4f6; --bg-card: #ffffff; --bg-header: #ffffff;
+            --text-main: #1f2937; --text-muted: #6b7280; --text-accent: #2563eb;
+            --border-color: #e5e7eb; --highlight-bg: #f3f4f6;
+            --button-bg: #2563eb; --button-text: #ffffff; --button-hover: #1d4ed8;
+            --feedback-success-bg: #ecfdf5; --feedback-success-border: #34d399; --feedback-success-text: #065f46;
+            --feedback-error-bg: #fef2f2; --feedback-error-border: #f87171; --feedback-error-text: #991b1b;
+        }
+
+        [data-theme="midnight"] {
+            --bg-body: #000000; --bg-card: #000000; --bg-header: #000000;
+            --text-main: #e0e0e0; --text-muted: #888888; --text-accent: #90caf9;
+            --border-color: #333333; --highlight-bg: #1a1a1a;
+            --button-bg: #90caf9; --button-text: #000000; --button-hover: #42a5f5;
+            --feedback-success-bg: #051b11; --feedback-success-border: #0f5132; --feedback-success-text: #75b798;
+            --feedback-error-bg: #2c0b0e; --feedback-error-border: #842029; --feedback-error-text: #ea868f;
+        }
+
+        [data-theme="legacy-dark"] {
+            --bg-body: #2d343e; --bg-card: #3c424f; --bg-header: #3c424f;
+            --text-main: #e8e6e3; --text-muted: #b0c4de; --text-accent: #8ab4f8;
+            --border-color: #555; --highlight-bg: #454c5a;
+            --button-bg: #8ab4f8; --button-text: #202124; --button-hover: #a3c5f9;
+            --feedback-success-bg: #344e41; --feedback-success-border: #52b788; --feedback-success-text: #c7f9cc;
+            --feedback-error-bg: #5e2129; --feedback-error-border: #a4133c; --feedback-error-text: #f8d7da;
+        }
+
+        [data-theme="sepia"] {
+            --bg-body: #f4ecd8; --bg-card: #fdf6e3; --bg-header: #e4d5b7;
+            --text-main: #433422; --text-muted: #7c6f5a; --text-accent: #a05a2c;
+            --border-color: #d3c4a5; --highlight-bg: #ebe1c9;
+            --button-bg: #a05a2c; --button-text: #fdf6e3; --button-hover: #864822;
+            --feedback-success-bg: #e6f4ea; --feedback-success-border: #8ab893; --feedback-success-text: #2e4c35;
+            --feedback-error-bg: #f9e3e3; --feedback-error-border: #d48f8f; --feedback-error-text: #5c2b2b;
+        }
+
+        [data-theme="contrast"] {
+            --bg-body: #000000; --bg-card: #000000; --bg-header: #000000;
+            --text-main: #ffffff; --text-muted: #dddddd; --text-accent: #ffff00;
+            --border-color: #ffffff; --highlight-bg: #333333;
+            --button-bg: #ffff00; --button-text: #000000; --button-hover: #e6e600;
+            --feedback-success-bg: #000000; --feedback-success-border: #00ff00; --feedback-success-text: #00ff00;
+            --feedback-error-bg: #000000; --feedback-error-border: #ff0000; --feedback-error-text: #ff0000;
+        }
+
+        /* --- Global Reset & Layout --- */
+        * { box-sizing: border-box; }
+        
+        body {
+            font-family: var(--font-main);
+            margin: 0;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+            line-height: 1.6;
+        }
+
+        /* --- Header --- */
+        header {
+            background-color: var(--bg-header);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        header.unpinned { position: relative; box-shadow: none; }
+
+        .header-top {
+            display: flex; justify-content: space-between; align-items: center;
+            width: 100%; flex-wrap: wrap; gap: 15px;
+        }
+
+        header h1 { font-size: 1.5rem; margin: 0; color: var(--text-accent); font-weight: 700; }
+
+        .controls-wrapper { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+
+        /* --- Custom Theme Builder --- */
+        .custom-builder {
+            display: none; flex-wrap: wrap; gap: 15px;
+            background-color: var(--bg-card); padding: 10px 15px;
+            border-radius: 8px; border: 1px solid var(--border-color);
+            margin-top: 5px; font-size: 0.85rem; animation: fadeIn 0.3s;
+            width: 100%; justify-content: flex-end;
+        }
+        .custom-builder.active { display: flex; }
+        .color-picker-group { display: flex; align-items: center; gap: 8px; }
+        .color-picker-group input[type="color"] {
+            border: none; width: 25px; height: 25px; border-radius: 4px;
+            cursor: pointer; padding: 0; background: none;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- Controls --- */
+        .header-btn {
+            background-color: var(--highlight-bg);
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.2s;
+            height: 34px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .header-btn:hover {
+            border-color: var(--text-accent);
+            color: var(--text-accent);
+        }
+
+        .pin-btn {
+            background: none; border: 1px solid var(--border-color); color: var(--text-main);
+            cursor: pointer; padding: 0 10px; border-radius: 6px; font-size: 1rem;
+            transition: background-color 0.2s; height: 34px; display: flex;
+            align-items: center; justify-content: center;
+        }
+        .pin-btn:hover { background-color: var(--highlight-bg); }
+        .pin-btn.pin-active { background-color: rgba(0, 0, 0, 0.1); }
+
+        select#theme-select {
+            padding: 0 12px; border-radius: 6px; border: 1px solid var(--border-color);
+            background-color: var(--bg-card); color: var(--text-main);
+            cursor: pointer; font-family: inherit; height: 34px;
+        }
+
+        /* --- Section Navigation --- */
+        .section-nav { display: flex; gap: 10px; flex-wrap: wrap; }
+        .section-nav button {
+            background-color: var(--highlight-bg); color: var(--text-main);
+            border: 1px solid var(--border-color); padding: 6px 12px;
+            border-radius: 6px; cursor: pointer; font-size: 0.85rem;
+            font-weight: 500; transition: all 0.2s;
+        }
+        .section-nav button:hover { border-color: var(--text-accent); color: var(--text-accent); }
+
+        /* --- Main Content --- */
+        .container {
+            max-width: 850px;
+            margin: 2rem auto;
+            padding: 0 1rem 4rem 1rem;
+        }
+
+        .section-header {
+            margin-top: 3rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--text-accent);
+            color: var(--text-accent);
+            font-size: 1.5rem;
+            font-weight: 700;
+            scroll-margin-top: 150px; /* Offset for sticky header */
+        }
+
+        /* --- Question Card --- */
+        .question-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease;
+        }
+
+        .lo-box {
+            background-color: var(--highlight-bg);
+            border-left: 4px solid var(--text-accent);
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            font-style: italic;
+            display: none; /* Hidden by default */
+        }
+
+        .question-text {
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+
+        /* --- Options --- */
+        .options-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .option-label {
+            display: flex;
+            align-items: flex-start;
+            padding: 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .option-label:hover {
+            background-color: var(--highlight-bg);
+            border-color: var(--text-muted);
+        }
+
+        .option-label input {
+            margin-top: 0.3rem;
+            margin-right: 1rem;
+            accent-color: var(--text-accent);
+            transform: scale(1.2);
+        }
+
+        /* --- Buttons --- */
+        .btn-check {
+            margin-top: 1.5rem;
+            background-color: var(--button-bg);
+            color: var(--button-text);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            font-size: 1rem;
+        }
+
+        .btn-check:hover {
+            opacity: 0.9;
+        }
+
+        .btn-link {
+            display: inline-block;
+            background-color: var(--button-bg);
+            color: var(--button-text);
+            text-decoration: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: opacity 0.2s;
+            font-size: 1rem;
+        }
+
+        .btn-link:hover {
+            opacity: 0.9;
+        }
+
+        /* --- Feedback Area --- */
+        .feedback {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            border-radius: 8px;
+            display: none; /* Hidden by default */
+            border: 1px solid transparent;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .feedback.correct {
+            background-color: var(--feedback-success-bg);
+            border-color: var(--feedback-success-border);
+            color: var(--feedback-success-text);
+        }
+
+        .feedback.incorrect {
+            background-color: var(--feedback-error-bg);
+            border-color: var(--feedback-error-border);
+            color: var(--feedback-error-text);
+        }
+
+        .feedback-header {
+            font-weight: 800;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .rationale {
+            margin-top: 1rem;
+            font-size: 0.95rem;
+        }
+
+        .source {
+            display: block;
+            margin-top: 1rem;
+            font-size: 0.85rem;
+            opacity: 0.8;
+            font-style: italic;
+            border-top: 1px dashed currentColor;
+            padding-top: 0.5rem;
+        }
+
+        /* --- Mobile Tweaks --- */
+        @media (max-width: 768px) {
+            .header-top { flex-direction: column; align-items: flex-start; }
+            .controls-wrapper { width: 100%; justify-content: flex-start; }
+            .section-nav { justify-content: flex-start; }
+            .custom-builder { justify-content: flex-start; }
+            header h1 { font-size: 1.25rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header id="main-header">
+        <div class="header-top">
+            <h1>Week 43 Practice Quiz 2</h1>
+            <div class="controls-wrapper">
+                
+                <!-- Reveal LOs Button in Header -->
+                <button id="reveal-all-btn" class="header-btn" onclick="toggleAllLOs()">Show Learning Objectives</button>
+
+                <!-- Pin Button -->
+                <button class="pin-btn pin-active" id="pin-btn" onclick="toggleHeader()" title="Pin/Unpin Header">📌</button>
+                
+                <!-- Theme Selector -->
+                <div class="theme-control">
+                    <select id="theme-select" onchange="changeTheme(this.value)">
+                        <option value="dark">Modern Dark</option>
+                        <option value="midnight">Midnight</option>
+                        <option value="light">Modern Light</option>
+                        <option value="legacy-dark">Legacy Dark</option>
+                        <option value="sepia">Sepia</option>
+                        <option value="contrast">High Contrast</option>
+                        <option value="custom">⚙️ Custom...</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Custom Theme Color Pickers -->
+            <div class="custom-builder" id="custom-builder">
+                <div class="color-picker-group">
+                    <label>Background:</label>
+                    <input type="color" id="color-bg" value="#1a1a2e" oninput="updateCustomTheme()">
+                </div>
+                <div class="color-picker-group">
+                    <label>Cards:</label>
+                    <input type="color" id="color-card" value="#16213e" oninput="updateCustomTheme()">
+                </div>
+                <div class="color-picker-group">
+                    <label>Text:</label>
+                    <input type="color" id="color-text" value="#e94560" oninput="updateCustomTheme()">
+                </div>
+                <div class="color-picker-group">
+                    <label>Accent:</label>
+                    <input type="color" id="color-accent" value="#0f3460" oninput="updateCustomTheme()">
+                </div>
+            </div>
+        </div>
+        
+        <!-- Dynamic Navigation Bar -->
+        <div class="section-nav" id="section-nav"></div>
+    </header>
+
+    <div class="container">
+        <div id="quiz-root">
+            <!-- Content injected via JS -->
+        </div>
+    </div>
+
+    <script>
+        // --- Data ---
+        const quizData = [
+            // --- Section 1: Female Reproductive Histology ---
+            {
+                section: "Female Reproductive Histology",
+                fullLO: "LO1: List the organs of the female reproductive tract and identify their locations and functions (relative to menstrual cycle).",
+                question: "A 28-year-old woman is evaluated for infertility. A specialized imaging study is used to track the path of an ovulated oocyte. After the oocyte is released from the ovary, it enters the oviduct. According to normal reproductive physiology, in which specific anatomical segment of the female reproductive tract does fertilization normally occur?",
+                options: {
+                    A: "Ampulla of the oviduct",
+                    B: "Cervical canal",
+                    C: "Infundibulum of the oviduct",
+                    D: "Isthmus of the oviduct",
+                    E: "Uterine cavity"
+                },
+                correctAnswer: "A",
+                rationale: "The oviduct (Fallopian tube) receives the egg at ovulation and acts as a conduit for sperm. Fertilization normally takes place in the ampulla, which is the intermediate 2/3 of the tube.",
+                source: "Female Reproductive Histology Handout PDF, page 7: 'receives egg at ovulation, conduit for sperm, fertilization normally in ampula (distal 1/3 of tube)'"
+            },
+            {
+                section: "Female Reproductive Histology",
+                fullLO: "LO1: List the organs of the female reproductive tract and identify their locations and functions (relative to menstrual cycle).",
+                question: "A 35-year-old woman undergoes a transvaginal ultrasound to evaluate abnormal uterine bleeding. The sonographer assesses the thickness of the uterine wall. The innermost mucosal layer of the uterine body undergoes monthly cyclic changes in thickness and morphology. Which specific portion of this layer is normally sloughed off during menstruation?",
+                options: {
+                    A: "Basal layer of the endometrium",
+                    B: "Functional layer of the endometrium",
+                    C: "Inner circular layer of the myometrium",
+                    D: "Outer longitudinal layer of the myometrium",
+                    E: "Perimetrium"
+                },
+                correctAnswer: "B",
+                rationale: "The endometrium consists of a basal layer that remains intact and a functional layer. The functional layer is sloughed off during menstruation and undergoes cyclic changes in response to estrogen and progesterone.",
+                source: "Female Reproductive Histology Handout PDF, page 8: 'basal layer –remains intact | functional layer – sloughed off during menstruation; during the menstrual cycle... the epithelium in the functional layer is subject to monthly cyclic changes'"
+            },
+            {
+                section: "Female Reproductive Histology",
+                fullLO: "LO2: Describe the microscopic organization of the ovary. Outline the different stages of follicular differentiation relative to stage of oogenesis and hormonal control.",
+                question: "A pathologist examines a histological section of a normal ovary from a 22-year-old woman. She identifies numerous small follicles located just beneath the tunica albuginea. These follicles consist of a large, round oocyte surrounded by a single layer of squamous cells. At what stage of oogenesis are the oocytes within these specific follicles arrested?",
+                options: {
+                    A: "Metaphase of meiosis I",
+                    B: "Metaphase of meiosis II",
+                    C: "Prophase of meiosis I",
+                    D: "Prophase of meiosis II",
+                    E: "Telophase of meiosis II"
+                },
+                correctAnswer: "C",
+                rationale: "Primordial follicles are characterized by a large round oocyte surrounded by a single layer of squamous cells. All follicles remain at the primordial stage until puberty, and the oocytes within them are arrested in prophase of meiosis I.",
+                source: "Female Reproductive Histology Handout PDF, page 2: 'Primordial follicle • large round oocyte surrounded by single layer squamous cells... all follicles primordial till puberty; oocyte arrested in prophase of meiosis I'"
+            },
+            {
+                section: "Female Reproductive Histology",
+                fullLO: "LO2: Describe the microscopic organization of the ovary. Outline the different stages of follicular differentiation relative to stage of oogenesis and hormonal control.",
+                question: "An ovarian biopsy from a woman undergoing fertility treatment reveals a developing follicle characterized by a stratified epithelial layer of granulosa cells and the appearance of a refractile, deeply-staining layer immediately surrounding the oocyte. Stromal cells have begun to organize around the follicle, but no fluid-filled cavities are present. Which of the following best describes this stage of follicular development?",
+                options: {
+                    A: "Mature (Graafian) follicle",
+                    B: "Primary multilaminar follicle",
+                    C: "Primary unilaminar follicle",
+                    D: "Primordial follicle",
+                    E: "Secondary (antral) follicle"
+                },
+                correctAnswer: "B",
+                rationale: "The primary multilaminar follicle is defined by the proliferation of follicular cells to form a stratified epithelial layer (granulosa cells) and the formation of the refractile zona pellucida separating the oocyte and granulosa layer. Fluid-filled cavities (antrum) do not appear until the secondary (antral) stage.",
+                source: "Female Reproductive Histology Handout PDF, page 2: 'Primary multilaminar follicle • follicular cells proliferate to form stratified epithelial layer of granulosa (follicular) cells • oocyte and granulosa layer separated by refractile, deeply-staining zona pellucida'"
+            },
+            {
+                section: "Female Reproductive Histology",
+                fullLO: "LO3: Describe the microscopic organization of the corpus luteum relative to stage of menstrual cycle.",
+                question: "Following ovulation, the remaining follicle wall collapses and undergoes profound histological changes to form the corpus luteum. During this transformation, which of the following vital structural events occurs to allow the corpus luteum to function as an effective endocrine organ?",
+                options: {
+                    A: "Capillaries invade the follicular epithelium",
+                    B: "Granulosa cells undergo widespread apoptosis",
+                    C: "The basal lamina thickens into a dense fibrotic scar",
+                    D: "The theca externa differentiates into squamous epithelium",
+                    E: "The zona pellucida expands to fill the antrum"
+                },
+                correctAnswer: "A",
+                rationale: "After ovulation, the remaining follicle wall collapses. The granulosa and theca interna cells accumulate lipid and enlarge. A critical step in this transformation into an active endocrine organ is the invasion of capillaries into the previously avascular follicular epithelium.",
+                source: "Female Reproductive Histology Handout PDF, page 5: 'Corpus Luteum • following ovulation the remaining follicle wall collapses... • capillaries invade follicular epithelium!!!'"
+            },
+            {
+                section: "Female Reproductive Histology",
+                fullLO: "LO3: Describe the microscopic organization of the corpus luteum relative to stage of menstrual cycle.",
+                question: "A 26-year-old woman is in the late luteal phase of her menstrual cycle. Because fertilization did not occur, her corpus luteum undergoes generalized degeneration. Histologically, the active steroid-secreting cells are replaced by a connective tissue scar. What is the correct anatomical term for this residual structure?",
+                options: {
+                    A: "Atretic follicle",
+                    B: "Corpus albicans",
+                    C: "Corpus hemorrhagicum",
+                    D: "Stigma",
+                    E: "Theca lutein"
+                },
+                correctAnswer: "B",
+                rationale: "If fertilization does not occur, the corpus luteum degenerates and is replaced by a connective tissue scar known as the corpus albicans.",
+                source: "Female Reproductive Histology Handout PDF, page 5: 'Corpus albicans • without fertilization – generalized degeneration of corpus luteum, replaced with ct scar'"
+            },
+            {
+                section: "Female Reproductive Histology",
+                fullLO: "LO4: Know the microscopic organization of the oviducts / uterine tubes. Understand final stages of spermatozoa maturation (capacitation) & acrosome reaction for fertilization.",
+                question: "A histological section of the ampulla of the oviduct is examined under a microscope. The epithelium is simple columnar and consists of both secretory cells and ciliated cells. Which of the following hormones is directly responsible for increasing the number of cilia and their rate of beating toward the uterus?",
+                options: {
+                    A: "Estrogen",
+                    B: "Human chorionic gonadotropin (hCG)",
+                    C: "Luteinizing hormone",
+                    D: "Progesterone",
+                    E: "Prolactin"
+                },
+                correctAnswer: "A",
+                rationale: "The epithelium of the oviduct consists of simple columnar ciliated and secretory cells. Estrogen stimulates the generation of cilia and increases both the number of cilia and their rate of beating toward the uterus, whereas progesterone inhibits this activity.",
+                source: "Female Reproductive Histology PDF, slide 36: 'Epithelial/Muscular changes in oviduct under estrogen control... Ciliated cells (due to influence of estrogen cells generated cilia; # and rate of beating (toward uterus) increases due to estrogen; progesterone inhibits'"
+            },
+            {
+                section: "Female Reproductive Histology",
+                fullLO: "LO4: Know the microscopic organization of the oviducts / uterine tubes. Understand final stages of spermatozoa maturation (capacitation) & acrosome reaction for fertilization.",
+                question: "In an in vitro fertilization clinic, spermatozoa must undergo a specific maturation step before they are capable of initiating the acrosome reaction and fertilizing an egg. This process involves the modification of the glycoprotein coat and the removal of seminal proteins from the sperm surface. This final step of spermatozoa maturation is known as:",
+                options: {
+                    A: "Capacitation",
+                    B: "Meiosis II",
+                    C: "Oocyte maturation inhibition",
+                    D: "Syngamy",
+                    E: "Zonal digestion"
+                },
+                correctAnswer: "A",
+                rationale: "Capacitation is the final step of spermatozoa maturation. It is a process whereby the glycoprotein coat is modified and seminal proteins are removed from the surface of the sperm. Only after capacitation can the acrosomal reaction occur.",
+                source: "Female Reproductive Histology PDF, slide 42: 'capacitation –final step of spermatorzoa maturation -A process whereby the glycoprotein coat is modified and seminal proteins are removed from the surface of the sperm. - After capacitation, the acrosomal reaction can occur.'"
+            },
+            {
+                section: "Female Reproductive Histology",
+                fullLO: "LO5: Relate the microscopic organization of the uterus to stage of the menstrual cycle and its role in fetal development.",
+                question: "A 30-year-old woman undergoes an endometrial biopsy on day 21 of a standard 28-day menstrual cycle. Histological evaluation shows a thick endometrium with highly coiled, elongated glands appearing as sacculations. The stroma is edematous, and the glandular epithelium is actively secreting glycogen. These specific histological changes are primarily driven by which of the following hormones?",
+                options: {
+                    A: "Estrogen",
+                    B: "Follicle-stimulating hormone",
+                    C: "Luteinizing hormone",
+                    D: "Progesterone",
+                    E: "Prolactin"
+                },
+                correctAnswer: "D",
+                rationale: "Day 21 corresponds to the Secretory (Luteal) Phase (days 14-27). This phase is characterized by elongated, highly coiled glands (sacculations), an edematous stroma, and glycogen secretion. These changes are mainly due to the action of progesterone secreted by the corpus luteum.",
+                source: "Female Reproductive Histology Handout PDF, page 9: 'Secretory (Luteal) Phase • day 14-27 • further thickening of endometrium -glands elongate and become highly coiled (appears as sacculations in sections) • stroma proliferates and becomes edematous • glandular epithelium synthesizes and secretes glycogen • changes mainly due to progesterone'"
+            },
+            {
+                section: "Female Reproductive Histology",
+                fullLO: "LO5: Relate the microscopic organization of the uterus to stage of the menstrual cycle and its role in fetal development.",
+                question: "A 25-year-old woman is in the final days of her menstrual cycle (day 28), and pregnancy has not occurred. The endometrial tissue exhibits a dramatic reduction in thickness due to loss of fluid, followed by necrosis of the superficial three-quarters of the functional layer. Which of the following vascular events directly initiates this ischemic phase?",
+                options: {
+                    A: "Constriction of the arcuate arteries",
+                    B: "Constriction of the spiral (coiled) arteries",
+                    C: "Dilation of the basal arteries",
+                    D: "Dilation of the straight arteries",
+                    E: "Rupture of the myometrial capillary plexus"
+                },
+                correctAnswer: "B",
+                rationale: "The ischemic phase (day 28) occurs in the absence of pregnancy when the corpus luteum fails. The sharp decline in hormonal stimulation causes the spiral (coiled) arteries supplying the functional layer to constrict for hours at a time, leading to ischemia, necrosis, and eventual sloughing of the functional layer.",
+                source: "Female Reproductive Histology Handout PDF, page 9: 'Ischemic Phase • day 28 – in absence of pregnancy... • coiled arteries constrict for hours at a time, alternating with perfusion • endometrium thickness reduced... • necrosis of superficial ¾ of endometrium (functional layer)'"
+            },
+            {
+                section: "Female Reproductive Histology",
+                fullLO: "LO6: Describe the microscopic organization of the cervix and vagina. And relate transition of the uterine cervix to the vagina to HPV infection and carcinoma of the cervix.",
+                question: "A 45-year-old multiparous woman undergoes a routine pelvic examination. The gynecologist notes a small, mucus-filled cyst on the surface of the cervix. Histologically, this cyst formed because the stratified squamous epithelium of the ectocervix grew over and blocked the simple columnar epithelium of the endocervix. What is the proper clinical term for this benign lesion?",
+                options: {
+                    A: "Bartholin's cyst",
+                    B: "Corpus albicans",
+                    C: "Gartner's duct cyst",
+                    D: "Nabothian cyst",
+                    E: "Skene's gland cyst"
+                },
+                correctAnswer: "D",
+                rationale: "A Nabothian cyst is a mucus-filled cyst on the surface of the cervix. It is caused when the stratified squamous epithelium of the ectocervix grows over and occludes the simple columnar epithelium (and its mucous glands) of the endocervix.",
+                source: "Female Reproductive Histology PDF, slide 60: 'A nabothian cyst (or nabothian follicle) is a mucus-filled cyst on the surface of the cervix. They are most often caused when stratified squamous epithelium of the ectocervix (toward the vagina) grows over the simple columnar epithelium of the endocervix'"
+            },
+            {
+                section: "Female Reproductive Histology",
+                fullLO: "LO6: Describe the microscopic organization of the cervix and vagina. And relate transition of the uterine cervix to the vagina to HPV infection and carcinoma of the cervix.",
+                question: "A microbiologist is studying the normal vaginal flora and its role in maintaining a healthy mucosal environment. The healthy vagina maintains an acidic pH of 3.5 to 4.5. This low pH is primarily achieved because anaerobic bacteria metabolize a specific substrate abundantly present in the non-cornified stratified squamous epithelium of the vaginal mucosa. Which of the following substrates is metabolized to create this lactic acid?",
+                options: {
+                    A: "Fructose",
+                    B: "Glucose",
+                    C: "Glycogen",
+                    D: "Mucin",
+                    E: "Triglycerides"
+                },
+                correctAnswer: "C",
+                rationale: "The vaginal mucosa is lined by a non-cornified stratified squamous epithelium that is rich in glycogen. Anaerobic bacteria (normal flora) metabolize this glycogen into lactic acid, creating an acidic environment (pH 3.5 to 4.5) that helps control pathogens.",
+                source: "Female Reproductive Histology Handout PDF, page 12: 'Vagina A. Mucosa • stratified squamous epithelium non-cornified rich in glycogen – anaerobic bacterial metabolism creates lactic acid for acidification of lumen for control of pathogens'"
+            },
+
+            // --- Section 2: Breast Histology ---
+            {
+                section: "Breast Histology",
+                fullLO: "LO1: Review the global structure of the breast and describe its changes in response to hormone status.",
+                question: "A pathologist evaluates a benign breast biopsy from a 30-year-old woman. Under the microscope, she identifies several Terminal Ductal Lobular Units (TDLUs), which are the fundamental glandular units of the breast. Which of the following best describes the specific connective tissue compartment that immediately envelops the acini within a single TDLU and contains hormonally responsive fibroblast-like cells?",
+                options: {
+                    A: "Dense fibrous connective tissue",
+                    B: "Interlobular stroma",
+                    C: "Intralobular stroma",
+                    D: "Pectoralis major fascia",
+                    E: "Suspensory ligaments of Cooper"
+                },
+                correctAnswer: "C",
+                rationale: "The breast stroma is divided into two types. The intralobular stroma strictly envelops the acini within the lobule (TDLU) and consists of hormonally responsive fibroblast-like cells and scattered lymphocytes. The interlobular stroma surrounds the lobules and consists of dense fibrous connective tissue and adipose tissue.",
+                source: "Breast Histology PDF, slide 18: '2 types of breast STROMA: INTERLOBULAR STROMA -> Dense fibrous connective tissue + adipose tissue. INTRALOBULAR STROMA -> Envelopes the acini + hormonally responsive fibroblast – like cells + scattered lymphocytes.'"
+            },
+            {
+                section: "Breast Histology",
+                fullLO: "LO1: Review the global structure of the breast and describe its changes in response to hormone status.",
+                question: "A 28-year-old pregnant woman in her second trimester notices her breasts becoming significantly fuller. Histological changes during the proliferative phase of pregnancy include a dramatic increase in the number of lobules and acinar units. Which of the following combinations of hormones is primarily responsible for driving this active alveologenesis during pregnancy?",
+                options: {
+                    A: "Estrogen and Luteinizing Hormone",
+                    B: "Estrogen and Oxytocin",
+                    C: "Progesterone and Prolactin",
+                    D: "Prolactin and Oxytocin",
+                    E: "Testosterone and Inhibin"
+                },
+                correctAnswer: "C",
+                rationale: "During pregnancy, the mammary gland transitions to an active state where glandular units heavily predominate over stroma. This active alveologenesis is driven by the hormones progesterone and prolactin, allowing the production of colostrum by 16 weeks of gestation.",
+                source: "Breast Histology PDF, slide 23: 'Active Mammary Gland: glandular units> stroma: alveologenesis (progesterone & prolactin) by 16 weeks of pregnancy colostrum produced'"
+            },
+            {
+                section: "Breast Histology",
+                fullLO: "LO2: Describe mechanism of lactiferous duct secretion and regulation by hormones.",
+                question: "A researcher is studying the mechanisms of milk secretion in the lactating mammary gland. She observes that lipid droplets accumulate at the apical end of the epithelial cells lining the acinus. Because these lipid droplets are not membrane-bound, they are sloughed off along with a portion of the apical cell cytoplasm. Which of the following terms best describes this specific mode of glandular secretion?",
+                options: {
+                    A: "Apocrine",
+                    B: "Cytocrine",
+                    C: "Holocrine",
+                    D: "Merocrine",
+                    E: "Paracrine"
+                },
+                correctAnswer: "A",
+                rationale: "The mammary gland uses two modes of secretion. Proteins are secreted via the merocrine (exocytotic) pathway. Lipids are secreted via the apocrine pathway, which involves the fat droplets accumulating at the apical end and sloughing off with a portion of the apical cell membrane.",
+                source: "Breast Histology PDF, slide 29: 'Mammary gland secretion modes: Merocrine (exocytotic) for many proteins. Apocrine for fat sloughing of apical end of epithelial cells lining acinus. Apical end accumulates lipid droplets, not membrane bound therefore cannot be secreted by exocytotic mechanism.'"
+            },
+            {
+                section: "Breast Histology",
+                fullLO: "LO2: Describe mechanism of lactiferous duct secretion and regulation by hormones.",
+                question: "A nursing mother describes the \"let-down\" reflex, in which milk is rapidly expelled from the breast during suckling. This process relies on the contraction of specialized cells surrounding the acini and lactiferous ducts. Which of the following hormones directly acts on these myoepithelial cells to stimulate this contraction?",
+                options: {
+                    A: "Estrogen",
+                    B: "Oxytocin",
+                    C: "Progesterone",
+                    D: "Prolactin",
+                    E: "Testosterone"
+                },
+                correctAnswer: "B",
+                rationale: "The myoepithelial cells surround the acini and ducts. Their contraction expels milk (the let-down reflex). This smooth muscle-like contraction is directly stimulated by oxytocin, which is released from the posterior pituitary in response to suckling.",
+                source: "Breast Histology PDF, slide 33: 'myoepithelial contraction in response to oxytocin in response to suckling... Myoepithelial cells of the mammary gland, stimulating the milk ejection.'"
+            },
+            {
+                section: "Breast Histology",
+                fullLO: "LO3: Describe how Estradiol (Estrogen) drives Breast Cancer Cell Proliferation.",
+                question: "A 55-year-old woman is diagnosed with an estrogen receptor-positive (ER+) breast cancer. The oncologist prescribes Tamoxifen, a Selective Estrogen Receptor Modifier (SERM). In a normal, untreated ER+ cancer cell, the binding of estradiol to the estrogen receptor directly leads to which of the following downstream events?",
+                options: {
+                    A: "Activation of gene transcription via Estrogen Response Elements (ERE)",
+                    B: "Immediate degradation of the estrogen receptor in the proteasome",
+                    C: "Inhibition of Cyclin D production",
+                    D: "Phosphorylation of the Rb protein causing cell cycle arrest",
+                    E: "Upregulation of the p53 tumor suppressor protein"
+                },
+                correctAnswer: "A",
+                rationale: "When estrogen/estradiol binds to the Estrogen Receptor (ER) in normal or cancer cells, it moves to the nucleus and activates the transcription of over 200 genes. It does this by binding to Estrogen Response Elements (ERE) on the DNA, and many of these gene products subsequently drive cell proliferation.",
+                source: "Breast Histology PDF, slide 38: 'ER in normal and cancer cells when bound by estrogen/estradiol activate gene transcription of over 200 genes; many of these gene products drive proliferation. These genes have an ERE (estrogen response element)'"
+            },
+            {
+                section: "Breast Histology",
+                fullLO: "LO3: Describe how Estradiol (Estrogen) drives Breast Cancer Cell Proliferation.",
+                question: "A patient with metastatic ER+ breast cancer is prescribed a CDK4/6 inhibitor as an adjuvant to her antiestrogen therapy. This drug halts the cell cycle in the G1 phase. It achieves this cell cycle arrest by directly preventing the phosphorylation (and subsequent inactivation) of which of the following critical regulatory proteins?",
+                options: {
+                    A: "E2F",
+                    B: "Estrogen receptor alpha",
+                    C: "p53",
+                    D: "Progesterone receptor",
+                    E: "Rb (Retinoblastoma) protein"
+                },
+                correctAnswer: "E",
+                rationale: "CDK4/6 inhibitors block the activity of Cyclin-Dependent Kinases 4 and 6. Normally, CDK4/6 phosphorylates the Rb protein, inactivating it and allowing the transcription factor E2F to drive the cell cycle forward. By inhibiting CDK4/6, Rb remains in its active, unphosphorylated state, tightly binding E2F and halting the cell cycle in the G1 phase.",
+                source: "Breast Histology PDF, slide 45: 'Recall from Foundations: CDK4/6 inhibitors would activate Rb and halt the cell cycle in GI phase (active Rb is not phosphorylated)'"
+            },
+            {
+                section: "Breast Histology",
+                fullLO: "LO4: Review lymph node drainage toward an understanding of metastatic spread of breast cancer.",
+                question: "A 60-year-old woman is diagnosed with an invasive ductal carcinoma located in the upper outer (lateral) quadrant of her right breast. Based on the normal lymphatic drainage patterns of the breast, to which of the following regional lymph node groups is this tumor most likely to metastasize first?",
+                options: {
+                    A: "Abdominal lymph nodes",
+                    B: "Axillary lymph nodes",
+                    C: "Cervical lymph nodes",
+                    D: "Inguinal lymph nodes",
+                    E: "Parasternal lymph nodes"
+                },
+                correctAnswer: "B",
+                rationale: "Lymph from the lateral quadrants of the breast drains predominantly to the axillary lymph nodes located near the lateral border of the pectoralis major. Lymph from the medial quadrants typically drains to the parasternal lymph nodes.",
+                source: "Breast Histology Handout PDF, page 8: 'Lymph from the lateral breast quadrants drains to the axillary lymph nodes located near the lateral border of pectoralis major.'"
+            },
+            {
+                section: "Breast Histology",
+                fullLO: "LO4: Review lymph node drainage toward an understanding of metastatic spread of breast cancer.",
+                question: "A breast cancer patient undergoes a lumpectomy accompanied by a full axillary lymph node dissection. Several months after the surgery, she complains of severe swelling and heaviness in her ipsilateral arm. The surgeon explains that this condition is a direct result of damage to the lymphatic channels during the procedure. What is the clinical term for this postoperative complication?",
+                options: {
+                    A: "Angiosarcoma",
+                    B: "Fibroadenoma",
+                    C: "Lymphedema",
+                    D: "Mastitis",
+                    E: "Peau d'orange"
+                },
+                correctAnswer: "C",
+                rationale: "Surgical or radiation damage to the lymphatic channels in the axilla during an axillary lymph node dissection interferes with normal lymphatic drainage from the arm. This causes fluid accumulation and swelling of the upper extremity, a condition known as lymphedema.",
+                source: "Breast Histology Handout PDF, page 8: 'Clinical Note: Axillary lymph node dissection. Surgical or radiation damage to lymphatic channels in the axilla can interfere with lymphatic drainage from the arm on that side. This condition results in lymphedema (swelling due to accumulation of lymph fluid) of the upper extremity.'"
+            },
+
+            // --- Section 3: Lower Gynecologic Pathology ---
+            {
+                section: "Lower Gynecologic Pathology",
+                fullLO: "LO1: Compare and contrast the following lesions of the vulva in terms of etiology, epidemiology, clinical presentation, microscopic morphology: Lichen sclerosus.",
+                question: "A 65-year-old postmenopausal woman presents with chronic vulvar itching and pain. Physical examination reveals irregularly shaped, white plaques with a \"tissue paper-like\" appearance. A biopsy demonstrates epidermal atrophy with rete effacement and a band-like chronic inflammatory infiltrate in the superficial dermis. Which of the following is the most accurate statement regarding this patient's condition?",
+                options: {
+                    A: "It is caused by low-risk HPV types 6 and 11.",
+                    B: "It is associated with an increased risk of developing differentiated VIN.",
+                    C: "It represents an intraepithelial proliferation of apocrine-like cells.",
+                    D: "It routinely requires systemic chemotherapy for resolution.",
+                    E: "It shows strong, diffuse p16 immunostaining."
+                },
+                correctAnswer: "B",
+                rationale: "The patient has Lichen Sclerosus, an autoimmune chronic pruritic fibrosing dermatosis seen mostly in postmenopausal women. While overall having a good outcome, it carries an increased risk of progressing to differentiated Vulvar Intraepithelial Neoplasia (dVIN) and subsequent keratinizing squamous cell carcinoma.",
+                source: "Lower Gynecologic Tract Pathology PDF, slide 4: 'Lichen Sclerosus • postmenopausal women, autoimmune disease... • Tissue paper-like appearance... • Epidermal atrophy with rete effacement... • Increases risk of differentiated VIN (4%)'"
+            },
+            {
+                section: "Lower Gynecologic Pathology",
+                fullLO: "LO1: Compare and contrast the following lesions of the vulva in terms of etiology, epidemiology, clinical presentation, microscopic morphology: Condyloma acuminatum.",
+                question: "A 24-year-old woman presents with several raised, warty lesions on her vulva. A biopsy of one of the lesions reveals a papillary, exophytic \"tree-like\" growth with thickened squamous epithelium. High-power examination shows large superficial cells with enlarged, raisinoid nuclei and distinct perinuclear halos (koilocytes). These lesions are most strongly associated with infection by which of the following?",
+                options: {
+                    A: "Candida albicans",
+                    B: "Herpes simplex virus type 2",
+                    C: "Human papillomavirus types 6 and 11",
+                    D: "Human papillomavirus types 16 and 18",
+                    E: "Treponema pallidum"
+                },
+                correctAnswer: "C",
+                rationale: "Condyloma acuminatum (genital warts) are low-grade squamous intraepithelial lesions with condylomatous features. They are sexually transmitted and caused specifically by low-risk human papillomavirus (HPV) types 6 and 11.",
+                source: "Lower Gynecologic Tract Pathology PDF, slide 7: 'Condyloma acuminatum • Genital wart. • Low grade squamous intra-epithelial lesion with condylomatous features... • Caused by low risk human papillomavirus (HPV) types HPV 6 HPV 11'"
+            },
+            {
+                section: "Lower Gynecologic Pathology",
+                fullLO: "LO1: Compare and contrast the following lesions of the vulva in terms of etiology, epidemiology, clinical presentation, microscopic morphology: Vulvar intraepithelial neoplasia.",
+                question: "A 30-year-old woman has a vulvar biopsy showing a proliferation of hyperchromatic basal-like cells extending full-thickness through the epithelium (classic VIN3). There are numerous mitoses and virtually no superficial maturation. Immunostaining of the tissue will most likely be strongly positive for which of the following markers?",
+                options: {
+                    A: "Carcinoembryonic antigen (CEA)",
+                    B: "Mucin",
+                    C: "p16",
+                    D: "p53",
+                    E: "S100"
+                },
+                correctAnswer: "C",
+                rationale: "Classic Vulvar Intraepithelial Neoplasia (VIN) is associated with high-risk HPV (usually type 16). Because high-risk HPV E7 inactivates the Rb protein, cells overexpress p16. Therefore, classic VIN strongly immunostains positive for p16 (and is p53 negative). This contrasts with differentiated VIN, which is p16 negative and p53 mutant/positive.",
+                source: "Lower Gynecologic Tract Pathology PDF, slide 9: 'Vulvar intraepithelial neoplasia (VIN) • Associated with High-risk HPV (usually type 16)... • Immunostain: P16 positive cells and P53 negative.'"
+            },
+            {
+                section: "Lower Gynecologic Pathology",
+                fullLO: "LO1: Compare and contrast the following lesions of the vulva in terms of etiology, epidemiology, clinical presentation, microscopic morphology: Vulvar carcinoma.",
+                question: "A 75-year-old woman with a long history of lichen sclerosus develops a unifocal, invasive vulvar tumor. Biopsy confirms keratinizing squamous cell carcinoma. Unlike the basaloid variant of vulvar squamous cell carcinoma, this specific tumor type is characterized by an absence of which of the following?",
+                options: {
+                    A: "Atypical basal mitoses",
+                    B: "Desmoplastic stroma",
+                    C: "High-risk HPV association",
+                    D: "Increased cytoplasmic eosinophilia",
+                    E: "Prominent nucleoli"
+                },
+                correctAnswer: "C",
+                rationale: "There are two main types of vulvar squamous cell carcinoma. Basaloid SCC is associated with high-risk HPV (Type 16/18) and occurs in younger women. Keratinizing SCC is HPV-unrelated (\"No\" high-risk HPV association), occurs in older women, and is commonly associated with pre-existing inflammatory conditions like Lichen sclerosus.",
+                source: "Lower Gynecologic Tract Pathology PDF, slide 14: 'Vulvar squamous cell carcinoma. | Keratinizing Squamous Cell Carcinoma | High-risk HPV association: No | Associated precursor lesion: Differentiated-type VIN | Association with inflammatory condition: Common. Often Lichen sclerosus'"
+            },
+            {
+                section: "Lower Gynecologic Pathology",
+                fullLO: "LO1: Compare and contrast the following lesions of the vulva in terms of etiology, epidemiology, clinical presentation, microscopic morphology: Extramammary Paget disease.",
+                question: "A 68-year-old Caucasian woman presents with a red, intensely pruritic lesion on her labia majora. A biopsy reveals an intraepithelial proliferation of large, round cells with prominent pale cytoplasm spreading throughout the epidermis. Immunohistochemical staining shows these cells are positive for PAS, keratin, and mucin, but negative for S100. What is the most likely diagnosis?",
+                options: {
+                    A: "Basaloid squamous cell carcinoma",
+                    B: "Condyloma acuminatum",
+                    C: "Extramammary Paget disease",
+                    D: "Lichen sclerosus",
+                    E: "Vulvar melanoma"
+                },
+                correctAnswer: "C",
+                rationale: "Extramammary Paget disease presents as a red, pruritic lesion usually in older Caucasian women. It features large, pale \"Paget\" cells spreading through the epithelium. It must be differentiated from melanoma. Paget cells are PAS+, keratin+, and mucin+, whereas melanoma is S100+ and PAS/keratin negative.",
+                source: "Lower Gynecologic Tract Pathology PDF, slide 15: 'Extramammary Paget disease • Intraepithelial proliferation of apocrine-like cells. • Often old Caucasian women. • Often red, pruritic lesion. • Large, round “Paget” cells with prominent pale cytoplasm... • Paget cells are PAS+, keratin+, mucin+, CEA+ • Melanoma is PAS --, keratin --, S100 +'"
+            },
+            {
+                section: "Lower Gynecologic Pathology",
+                fullLO: "LO2: Describe the etiology, epidemiology, risk factors, and microscopic morphology of vaginal intraepithelial neoplasia and vaginal carcinoma.",
+                question: "A 50-year-old woman presents with post-coital vaginal bleeding. A biopsy of a vaginal mass confirms squamous cell carcinoma of the vagina. Which of the following is the most significant risk factor for the development of this specific malignancy?",
+                options: {
+                    A: "A history of diethylstilbestrol (DES) exposure in utero",
+                    B: "A previous carcinoma of the cervix or vulva",
+                    C: "Chronic candidiasis infections",
+                    D: "Lichen sclerosus of the vulva",
+                    E: "Nulliparity"
+                },
+                correctAnswer: "B",
+                rationale: "Vaginal squamous cell carcinoma is strongly associated with high-risk HPV (16 and 18). A major risk factor for its development is a previous history of squamous carcinoma of the cervix or vulva, as these share the same HPV etiology. (DES exposure is a risk factor for Clear Cell Adenocarcinoma, not squamous cell carcinoma).",
+                source: "Lower Gynecologic Tract Pathology PDF, slide 17: 'Vaginal carcinoma • Squamous cell carcinoma of the vagina • Associated with high risk human papillomavirus (HPV 16 and 18) • Risk factors: previous carcinoma of cervix or vulva'"
+            },
+            {
+                section: "Lower Gynecologic Pathology",
+                fullLO: "LO2: Describe the etiology, epidemiology, risk factors, and microscopic morphology of vaginal intraepithelial neoplasia and vaginal carcinoma.",
+                question: "A 19-year-old woman is found to have a vaginal tumor. A biopsy demonstrates a low-grade carcinoma with mild nuclear atypia, low mitotic activity, and cells containing abundant clear cytoplasm. The oncologist explains that this is a rare form of vaginal cancer. Which of the following historical maternal exposures during pregnancy is classically associated with the development of this specific tumor in the offspring?",
+                options: {
+                    A: "Diethylstilbestrol (DES)",
+                    B: "Human papillomavirus (HPV)",
+                    C: "Radiation therapy",
+                    D: "Thalidomide",
+                    E: "Valproic acid"
+                },
+                correctAnswer: "A",
+                rationale: "Clear cell adenocarcinoma of the vagina is a rare, low-grade carcinoma classically found in teenagers and young women whose mothers took diethylstilbestrol (DES) during pregnancy to prevent threatened abortions.",
+                source: "Lower Gynecologic Tract Pathology PDF, slide 18: 'Clear cell adenocarcinoma of the vagina • Rare form of vaginal cancer • Found in teenagers whose mothers took diethylstilbestrol(DES) during pregnancy'"
+            },
+            {
+                section: "Lower Gynecologic Pathology",
+                fullLO: "LO3: Describe the natural history of Human Papillomavirus (HPV) infection of the genital tract and explain how HPV contributes to malignant transformation.",
+                question: "A patient infected with high-risk Human Papillomavirus (HPV) develops a high-grade squamous intraepithelial lesion (HSIL). This precancerous transformation occurs because the viral DNA integrates into the host chromosome, leading to the overexpression of viral oncogenes. Which of the following correctly describes the specific molecular action of the HPV E6 oncoprotein?",
+                options: {
+                    A: "It binds and inactivates the Rb protein.",
+                    B: "It binds to and promotes the degradation of the tumor suppressor p53.",
+                    C: "It directly phosphorylates Cyclin D.",
+                    D: "It displaces E2F from the DNA promoter region.",
+                    E: "It inhibits the proteasome."
+                },
+                correctAnswer: "B",
+                rationale: "High-risk HPV causes malignant transformation via two main oncoproteins: E6 and E7. The E6 oncoprotein binds to the tumor suppressor p53 and promotes its degradation by the proteasome, resulting in a loss of tumor suppression. The E7 oncoprotein binds Rb and displaces E2F, promoting progression through the cell cycle.",
+                source: "Lower Gynecologic Tract Pathology PDF, slide 25: 'HPV oncogenes • E6 • Binds to the tumor suppressor p53 • Promotes p53 degradation by the proteasome'"
+            },
+            {
+                section: "Lower Gynecologic Pathology",
+                fullLO: "LO3: Describe the natural history of Human Papillomavirus (HPV) infection of the genital tract and explain how HPV contributes to malignant transformation.",
+                question: "A 22-year-old woman has a Pap smear that reveals a low-grade squamous intraepithelial lesion (LSIL) due to a transient HPV infection. The physician advises her that no aggressive surgical treatment is immediately necessary because of the known natural history of this infection. Which of the following represents the most likely natural course for this patient's lesion?",
+                options: {
+                    A: "It will inevitably progress to invasive carcinoma within 5 years.",
+                    B: "It will persist indefinitely but will never progress to a higher grade.",
+                    C: "It will spontaneously regress within 1 year.",
+                    D: "It will spread rapidly to the regional lymph nodes.",
+                    E: "It will transform into an adenocarcinoma."
+                },
+                correctAnswer: "C",
+                rationale: "Most genital HPV infections are transient. 50% are cleared within 8 months, and 90% within 2 years. Correspondingly, LSIL lesions spontaneously regress in about 90% of cases, typically within 1 year.",
+                source: "Lower Gynecologic Tract Pathology PDF, slide 35: 'Low-grade Squamous Intraepithelial Lesion (LSIL)... •Often spontaneously regresses (90%), typically within 1 year.'"
+            },
+            {
+                section: "Lower Gynecologic Pathology",
+                fullLO: "LO4: Distinguish between the following lesions of the cervix in terms of appearance on biopsy or cytology, likelihood of progression, treatment options: LSIL.",
+                question: "A cervical biopsy is performed on a 25-year-old woman. The pathology report describes a proliferation of hyperchromatic basal-like cells that extends no more than one-third of the way up the epithelium. The upper epithelium shows cellular differentiation and the presence of koilocytes with \"raisinoid\" nuclei. Which of the following is the most accurate classification of this lesion?",
+                options: {
+                    A: "Adenocarcinoma in situ",
+                    B: "Extramammary Paget disease",
+                    C: "High-grade squamous intraepithelial lesion (HSIL)",
+                    D: "Low-grade squamous intraepithelial lesion (LSIL)",
+                    E: "Squamous cell carcinoma"
+                },
+                correctAnswer: "D",
+                rationale: "LSIL (equivalent to CIN 1) is characterized by basal-like cell proliferation confined to the lower 1/3 of the epithelium, with maturation in the upper layers and prominent koilocytic atypia (cells with perinuclear halos and irregular, raisinoid nuclei).",
+                source: "Lower Gynecologic Tract Pathology PDF, slide 32: 'Low-grade Squamous Intraepithelial Lesion (LSIL) • Proliferation of hyperchromatic basal-like cells that extends no more than 1/3 of the way up the epithelium. • Cells differentiate (gain cytoplasm) in upper epithelium... • Koilocytes = large superficial cells with perinuclear halos and large, irregular, “Rasinoid” nuclei.'"
+            },
+            {
+                section: "Lower Gynecologic Pathology",
+                fullLO: "LO4: Distinguish between the following lesions of the cervix in terms of appearance on biopsy or cytology, likelihood of progression, treatment options: HSIL.",
+                question: "A 35-year-old woman's cervical biopsy demonstrates atypical squamous cells lacking superficial maturation. The hyperchromatic cells extend through the full thickness of the epithelium, and atypical mitoses are noted at all levels. Because a significant percentage of these lesions can progress to invasive carcinoma, which of the following is the most appropriate standard treatment approach?",
+                options: {
+                    A: "Immediate radical hysterectomy",
+                    B: "Observation with a repeat Pap smear in 3 years",
+                    C: "Radiation therapy",
+                    D: "Surgical excision or ablation (e.g., LEEP, laser ablation, conization)",
+                    E: "Systemic chemotherapy"
+                },
+                correctAnswer: "D",
+                rationale: "The biopsy describes a High-grade Squamous Intraepithelial Lesion (HSIL, specifically CIN 3/CIS). Given the high risk of progression to squamous cell carcinoma, HSIL requires treatment to remove the precancerous tissue. Standard treatments include LEEP (Loop Electrosurgical Excision Procedure), laser ablation, cryotherapy, or surgical conization.",
+                source: "Lower Gynecologic Tract Pathology PDF, slides 36 & 37: 'High grade Squamous Intraepithelial Lesion ( HSIL)... • Little to no superficial maturation. • Mitoses common at all levels, including atypical mitoses' AND 'Treatment: Given risk of progression to SCC, often treated with LEEP, laser ablation, cryotherapy, or surgical conization.'"
+            },
+            {
+                section: "Lower Gynecologic Pathology",
+                fullLO: "LO4: Distinguish between the following lesions of the cervix in terms of appearance on biopsy or cytology, likelihood of progression, treatment options: Squamous cell carcinoma.",
+                question: "A 52-year-old woman presents with post-coital vaginal bleeding. A cervical mass is biopsied. The pathologist observes an invasive epithelial tumor with sheet-like growth, infiltrating bands, and a prominent desmoplastic stroma. The invasive cells exhibit \"paradoxical maturation\" characterized by increased cytoplasmic eosinophilia. What is the most likely diagnosis?",
+                options: {
+                    A: "Clear cell adenocarcinoma",
+                    B: "Condyloma acuminatum",
+                    C: "Endocervical adenocarcinoma in situ",
+                    D: "High-grade squamous intraepithelial lesion",
+                    E: "Squamous cell carcinoma"
+                },
+                correctAnswer: "E",
+                rationale: "Invasive squamous cell carcinoma of the cervix presents as an invasive epithelial tumor, often with a desmoplastic/inflammatory stroma. A hallmark of invasion is \"paradoxical maturation\" where the infiltrating cells show increased cytoplasmic eosinophilia (keratinization) despite being deeply invasive.",
+                source: "Lower Gynecologic Tract Pathology PDF, slide 43: 'Squamous cell carcinoma • Sheet-like growth with infiltrating bands and single cells • Often desmoplastic/inflammatory stroma... • With invasion can see “paradoxical maturation” with increased cytoplasmic eosinophilia'"
+            },
+            {
+                section: "Lower Gynecologic Pathology",
+                fullLO: "LO4: Distinguish between the following lesions of the cervix in terms of appearance on biopsy or cytology, likelihood of progression, treatment options: Adenocarcinoma.",
+                question: "A 40-year-old woman undergoes a cervical biopsy that reveals malignant glandular elements confined to the mucosal crypts without stromal invasion. The lesion is associated with high-risk HPV 16 and 18. This specific glandular precursor lesion is frequently found co-existing (in 50-70% of cases) with which of the following?",
+                options: {
+                    A: "Clear cell adenocarcinoma",
+                    B: "Extramammary Paget disease",
+                    C: "Lichen sclerosus",
+                    D: "Squamous Cervical Intraepithelial Neoplasia (CIN)",
+                    E: "Vulvar melanoma"
+                },
+                correctAnswer: "D",
+                rationale: "Endocervical adenocarcinoma in situ is a precursor to invasive adenocarcinoma of the cervix. It is driven by the same high-risk HPV types (16 and 18) as squamous lesions, and therefore is found co-existing with squamous CIN in 50-70% of cases.",
+                source: "Lower Gynecologic Tract Pathology PDF, slide 39-40: 'Endocervical adenocarcinoma in situ • Age: 4th decade • Associated lesion: CIN in 50-70% of cases • HPV : 16 and 18'"
+            },
+            {
+                section: "Lower Gynecologic Pathology",
+                fullLO: "LO5: Describe cervical cancer screening and prevention, including the Papanicolaou test, HPV DNA testing, and the HPV vaccine.",
+                question: "A 24-year-old woman presents to her primary care physician for a well-woman examination. She has no significant past medical history, and her last Papanicolaou (Pap) test performed at age 21 was normal. She asks her physician if she is due for another Pap test today and whether she should also be tested for human papillomavirus (HPV). According to the USPSTF recommendations for routine cervical cancer screening, which of the following is the most appropriate screening strategy for this patient?",
+                options: {
+                    A: "Co-testing with cytology and high-risk HPV testing today",
+                    B: "Cytology (Pap test) alone today",
+                    C: "Cytology today, followed by annual cytology screening",
+                    D: "High-risk HPV testing alone today",
+                    E: "No screening is indicated until age 30"
+                },
+                correctAnswer: "B",
+                rationale: "According to the USPSTF recommendations provided in the lecture, routine cervical cancer screening for women aged 21 to 29 years should consist of cytology (Pap test) alone every 3 years. Because her last normal test was at age 21, she is due for cytology alone today at age 24. High-risk HPV testing (either alone or as co-testing with a Pap smear) is generally reserved for patients aged 30 to 65 years.",
+                source: "Lower Gynecologic Tract Pathology PDF, slide 46: 'Table 1. USPSTF Recommendations for Routine Cervical Cancer Screening... Aged 21–29 years | Recommendation: Cytology alone every 3 years'"
+            },
+            {
+                section: "Lower Gynecologic Pathology",
+                fullLO: "LO5: Describe cervical cancer screening and prevention, including the Papanicolaou test, HPV DNA testing, and the HPV vaccine.",
+                question: "A 35-year-old woman undergoes routine cervical cancer screening using primary high-risk HPV (hrHPV) DNA testing. Clinical data demonstrates that while hrHPV testing detects more cases of high-grade cervical intraepithelial neoplasia than cytology alone, its use is also associated with a significantly increased risk of which of the following?",
+                options: {
+                    A: "Autoimmune disorders",
+                    B: "Colposcopies and false-positive results",
+                    C: "Disseminated viral infections",
+                    D: "Endometrial cancer",
+                    E: "Sudden progression of latent tumors"
+                },
+                correctAnswer: "B",
+                rationale: "Primary hrHPV testing is highly sensitive for detecting high-grade lesions. However, because many HPV infections are transient and benign, testing exclusively for viral DNA increases the rate of false-positive results (finding HPV without true precancer), leading to unnecessary follow-up procedures like colposcopies.",
+                source: "Lower Gynecologic Tract Pathology PDF, slide 47: 'Data from clinical trial, cohort, and modeling studies demonstrate • average-risk patients aged 25–65 years, primary hrHPV testing and co-testing detect more cases of high-grade cervical intraepithelial neoplasia than cytology alone, but hrHPV-based tests are associated with an increased risk of colposcopies and false-positive results'"
+            },
+            {
+                section: "Lower Gynecologic Pathology",
+                fullLO: "LO5: Describe cervical cancer screening and prevention, including the Papanicolaou test, HPV DNA testing, and the HPV vaccine.",
+                question: "A pediatrician is counseling parents about the Gardasil 9 HPV vaccine for their 11-year-old daughter. The physician explains that the vaccine is highly effective at preventing new HPV infections and the subsequent development of cervical cancer. Which of the following best describes the core composition of this specific vaccine?",
+                options: {
+                    A: "Heat-killed, whole HPV virions",
+                    B: "Live-attenuated HPV strains",
+                    C: "Purified E6 and E7 oncoproteins",
+                    D: "Recombinant viral DNA plasmid",
+                    E: "Virus-like particles"
+                },
+                correctAnswer: "E",
+                rationale: "The Gardasil 9 HPV vaccine utilizes non-infectious \"Virus-like particles\" (VLPs) to trigger an immune response without exposing the patient to actual viral DNA or live virus. It is 97-100% effective against persistent infections from the targeted HPV types.",
+                source: "Lower Gynecologic Tract Pathology PDF, slide 48: 'HPV vaccination • Gardasil 9... • Virus-like particles • 97-100% effective against persistent HPV infections'"
+            },
+
+            // --- Section 4: Female Reproductive Disorders ---
+            {
+                section: "Female Reproductive Disorders",
+                fullLO: "LO1: Discuss gonadotropin patterns from in utero to menopause.",
+                question: "A researcher mapping the lifetime timeline of human female reproduction analyzes the total number of germ cells present in the ovaries at various developmental stages. According to normal physiological patterns, at which of the following life stages does a female possess the absolute highest number of oogonia and oocytes (approximately 6-7 million)?",
+                options: {
+                    A: "At birth",
+                    B: "At the onset of menopause",
+                    C: "At the onset of puberty",
+                    D: "During midgestation (16-20 weeks of pregnancy)",
+                    E: "During the peak of the LH surge"
+                },
+                correctAnswer: "D",
+                rationale: "The pool of oocytes is established early in life and continually depletes. The peak number of germ cells (6-7 million) is reached during midgestation (16-20 weeks of pregnancy). This drops to 1-2 million by birth and 300,000-500,000 by puberty.",
+                source: "Female Reproductive Disorders PDF, slide 10: 'Ovarian Follicle Development... Primordial follicle formation (midgestation-birth) a) 16-20 wk. pregnancy= 6-7 million b) Birth = 1-2 million c) Puberty = 300,000-500,000'"
+            },
+            {
+                section: "Female Reproductive Disorders",
+                fullLO: "LO1: Discuss gonadotropin patterns from in utero to menopause.",
+                question: "A 52-year-old woman reports that her menstrual periods have completely ceased over the last year. She complains of severe hot flashes and night sweats. Laboratory evaluation of her reproductive hormones will most likely reveal which of the following patterns indicative of hypergonadotropic hypogonadism?",
+                options: {
+                    A: "High AMH, High Estradiol, Low FSH",
+                    B: "Low AMH, High Estradiol, Low FSH",
+                    C: "Low AMH, Low Estradiol, High FSH",
+                    D: "Low AMH, Low Estradiol, Low FSH",
+                    E: "High AMH, Low Estradiol, High FSH"
+                },
+                correctAnswer: "C",
+                rationale: "Menopause represents the depletion of the ovarian follicle pool. Without follicles, Anti-Mullerian Hormone (AMH) and Estradiol production fall. The lack of negative feedback from estradiol causes the pituitary to dramatically increase FSH secretion, resulting in hypergonadotropic hypogonadism.",
+                source: "Female Reproductive Disorders PDF, slide 45: 'Ovarian Aging... Menopause: -Eventually menses stop completely(wax & wane) -FSH rises markedly; AMH is low; estradiol is low -hypergonadotropic hypogonadism ensues'"
+            },
+            {
+                section: "Female Reproductive Disorders",
+                fullLO: "LO2: Diagram the monthly cycle for estradiol, progesterone, LH and FSH & effects of feedback.",
+                question: "A 28-year-old woman is tracking her menstrual cycle to optimize her chances of conceiving. She uses ovulation predictor kits that detect the urinary spike of Luteinizing Hormone (LH). In a normal cycle, this massive LH surge is directly triggered by a preceding surge of which of the following hormones exerting a sudden positive feedback effect on the hypothalamus and pituitary?",
+                options: {
+                    A: "Anti-Müllerian Hormone (AMH)",
+                    B: "Estradiol (E2)",
+                    C: "Follicle-Stimulating Hormone (FSH)",
+                    D: "Inhibin B",
+                    E: "Progesterone (P4)"
+                },
+                correctAnswer: "B",
+                rationale: "During the late follicular phase, the dominant follicle produces massively high levels of estradiol (E2). This sustained high level of E2 switches from exerting negative feedback to exerting positive feedback, which directly induces the midcycle LH surge required for ovulation.",
+                source: "Female Reproductive Disorders PDF, slide 29: 'Preovulatory Follicle -E2 production becomes sufficient to achieve & maintain E2 levels to induce LH surge (hypothalamic & pit.) -E2 surge occurs 24-36 hr prior to ovulation & induces LH surge'"
+            },
+            {
+                section: "Female Reproductive Disorders",
+                fullLO: "LO2: Diagram the monthly cycle for estradiol, progesterone, LH and FSH & effects of feedback.",
+                question: "Following an unsuccessful menstrual cycle (no pregnancy), the corpus luteum undergoes demise, marking the luteal-follicular transition. This regression leads to a nadir in estradiol, progesterone, and inhibin A levels. The sharp decrease in these three hormones has which of the following immediate endocrine effects to restart the cycle?",
+                options: {
+                    A: "It directly induces the midcycle LH surge.",
+                    B: "It forcefully stimulates the release of prolactin.",
+                    C: "It permanently shuts down the GnRH pulse generator.",
+                    D: "It removes negative feedback, allowing serum FSH to rise and rescue new follicles.",
+                    E: "It upregulates oxytocin receptors in the myometrium."
+                },
+                correctAnswer: "D",
+                rationale: "The demise of the corpus luteum drops E2, P4, and inhibin A levels. Because these hormones were suppressing the pituitary, their absence removes the negative feedback. This allows GnRH pulse frequency to increase and FSH levels to rise, rescuing the next cohort of primordial follicles from atresia.",
+                source: "Female Reproductive Disorders PDF, slide 37: 'Luteal-Follicular Transition -Demise of corpus luteum results in nadir of E2, P4, and inhibin serum levels... -Decrease in E2 and P4 allows increased frequency of GnRH pulses & removal of pituitary from negative feedback -Serum FSH & LH levels rise and rescue ~70 day old primordial follicles from atresia'"
+            },
+            {
+                section: "Female Reproductive Disorders",
+                fullLO: "LO3: Explain the principles of follicular recruitment including the roles of inhibin & FSH.",
+                question: "During the early follicular phase, FSH rescues a cohort of follicles from apoptosis. As these follicles grow, their granulosa cells begin to secrete a specific peptide that directly suppresses further pituitary FSH secretion, ensuring that only the most dominant follicle survives. Which of the following is the primary peptide responsible for this feedback?",
+                options: {
+                    A: "Activin",
+                    B: "Anti-Müllerian Hormone (AMH)",
+                    C: "Inhibin A",
+                    D: "Inhibin B",
+                    E: "Insulin-like growth factor (IGF)"
+                },
+                correctAnswer: "D",
+                rationale: "Inhibin B is secreted by the proliferating granulosa cells in response to FSH during the follicular phase. Its primary role is to feed back on the pituitary and directly suppress FSH release, which starves the lesser follicles of support and helps select the single dominant follicle. (Inhibin A is more prominent in the luteal phase).",
+                source: "Female Reproductive Disorders PDF, slide 27: 'Growth Factors & Peptides -Inhibin B (secreted by granulosa cells) in response to FSH, directly suppresses pituitary FSH -inhibin B more in follicular phase'"
+            },
+            {
+                section: "Female Reproductive Disorders",
+                fullLO: "LO3: Explain the principles of follicular recruitment including the roles of inhibin & FSH.",
+                question: "The production of follicular phase estradiol is explained by the 2-cell, 2-gonadotropin mechanism. The theca cells produce androgens under the influence of LH, but they lack the enzyme required to convert these androgens into estrogens. Therefore, the androgens diffuse into the neighboring granulosa cells, which possess which of the following essential enzymes?",
+                options: {
+                    A: "11-beta hydroxylase",
+                    B: "17-hydroxylase (CYP17)",
+                    C: "5-alpha reductase (SRD5A2)",
+                    D: "Aromatase (CYP19)",
+                    E: "Cholesterol desmolase (CYP11A1)"
+                },
+                correctAnswer: "D",
+                rationale: "In the 2-cell, 2-gonadotropin mechanism, the theca cells (stimulated by LH) use CYP17 to make androgens. The granulosa cells (stimulated by FSH) possess Aromatase (CYP19), which takes those androgens and converts them into estrogens (estradiol).",
+                source: "Female Reproductive Disorders PDF, slide 22: '2-Cell, 2-Gonadotropin Mechanism 1) Theca cells -have LH receptors (LHR) -have enzymes (CYP17) to make androgens... -lack aromatase (CYP19) 2) Granulosa cells -have FSH receptors (FSHR) -have aromatase (CYP19) to convert androgens to estrogens'"
+            },
+            {
+                section: "Female Reproductive Disorders",
+                fullLO: "LO4: Explain the function of the corpus luteum and its effects on the endometrium.",
+                question: "A 30-year-old woman successfully conceives. About 8 days after ovulation, the blastocyst implants into the uterine wall and begins secreting human chorionic gonadotropin (hCG). Which of the following is the primary physiological function of hCG in early pregnancy?",
+                options: {
+                    A: "It causes the immediate shedding of the functional layer of the endometrium.",
+                    B: "It directly stimulates the anterior pituitary to release a second LH surge.",
+                    C: "It directly upregulates oxytocin release for uterine contractions.",
+                    D: "It induces the final completion of meiosis II in the fertilized ovum.",
+                    E: "It rescues and maintains the corpus luteum until the placenta is established."
+                },
+                correctAnswer: "E",
+                rationale: "The corpus luteum normally degrades if pregnancy does not occur. However, if implantation occurs, the developing embryo secretes hCG (which acts similarly to LH) to \"rescue\" the corpus luteum. The corpus luteum continues to produce progesterone, maintaining the pregnancy until the placenta takes over at 7-10 weeks.",
+                source: "Female Reproductive Disorders PDF, slide 35: 'Luteal Phase... -In early pregnancy, hCG rescues the corpus luteum, remaining functional until placenta is well established (7-10 weeks); hCG & LH very similar'"
+            },
+            {
+                section: "Female Reproductive Disorders",
+                fullLO: "LO4: Explain the function of the corpus luteum and its effects on the endometrium.",
+                question: "During the luteal phase of the menstrual cycle, the corpus luteum produces massive amounts of progesterone. This hormone acts directly on the uterus to prepare it for potential blastocyst implantation. Which of the following best describes the primary effect of progesterone on the uterine endometrium?",
+                options: {
+                    A: "It causes rampant proliferation and hyperplasia of the basal layer.",
+                    B: "It induces apoptosis of the glandular epithelium.",
+                    C: "It promotes secretory changes, making the lining thick and hospitable.",
+                    D: "It stimulates intense, rhythmic myometrial contractions.",
+                    E: "It triggers the immediate constriction of the spiral arteries."
+                },
+                correctAnswer: "C",
+                rationale: "Progesterone's most important reproductive function is to promote secretory changes in the uterine endometrium (creating a thick, nutrient-rich environment) to prepare it for implantation.",
+                source: "Female Reproductive Disorders PDF, slide 13: 'Functions of Progesterone... Promotes secretory changes in uterine endometrium preparing for implantation'"
+            },
+            {
+                section: "Female Reproductive Disorders",
+                fullLO: "LO5: Describe the evaluation of anovulation and hypogonadism.",
+                question: "A 26-year-old woman presents to the clinic with complaints of irregular, infrequent menstrual periods and increased facial hair growth (hirsutism). She is overweight and blood tests reveal hyperinsulinemia. An ultrasound of her pelvis shows polycystic-appearing ovaries. Which of the following laboratory abnormalities is classically associated with this patient's syndrome?",
+                options: {
+                    A: "Decreased LH/FSH ratio",
+                    B: "Decreased sex hormone-binding globulin (SHBG)",
+                    C: "Decreased testosterone",
+                    D: "Markedly elevated FSH",
+                    E: "Unmeasurable Anti-Mullerian Hormone (AMH)"
+                },
+                correctAnswer: "B",
+                rationale: "The patient has Polycystic Ovary Syndrome (PCOS), the most common cause of anovulation. Endocrine abnormalities in PCOS include an increased LH/FSH ratio, increased testosterone, hyperinsulinemia, and decreased Sex Hormone-Binding Globulin (SHBG). The decreased SHBG results in higher levels of free, active testosterone, worsening the hirsutism.",
+                source: "Female Reproductive Disorders PDF, slide 47: 'Endocrine Abnormalities in PCOS | Hirsutism... -Increased testosterone -Increased LH/FSH ratio -Decreased Sex Hormone Binding Globulin (SHBG): more free T'"
+            },
+            {
+                section: "Female Reproductive Disorders",
+                fullLO: "LO5: Describe the evaluation of anovulation and hypogonadism.",
+                question: "A 19-year-old female distance runner presents with a 6-month history of amenorrhea. She has a remarkably low BMI and engages in strenuous exercise daily. Laboratory testing shows low serum estradiol, low FSH, and low LH. An MRI of her pituitary is completely normal. Which of the following is the most likely primary pathophysiological mechanism causing her amenorrhea?",
+                options: {
+                    A: "Autoimmune destruction of the ovarian follicles",
+                    B: "Congenital absence of the uterus and vagina",
+                    C: "Suppression of the hypothalamic GnRH pulse generator",
+                    D: "Sustained elevation of prolactin from a microadenoma",
+                    E: "XXY chromosomal mosaicism"
+                },
+                correctAnswer: "C",
+                rationale: "The patient presents with weight loss/exercise-induced amenorrhea. This is a form of hypogonadotropic hypogonadism (low sex steroids, low/normal FSH/LH). The severe stress and low energy state cause suppression of the hypothalamic GnRH pulse generator, thereby preventing pituitary gonadotropin release and subsequent ovarian stimulation.",
+                source: "Female Reproductive Disorders PDF, slide 56: 'Weight Loss Amenorrhea -Hypoestrogenic amenorrhea -Patients usually are thin & have low BMI -Can be due to: a) stress... c) strenuous exercise... -Affects GnRH pulse generator'"
+            }
+        ];
+
+        // --- Core Logic ---
+        const quizRoot = document.getElementById('quiz-root');
+        const themeSelect = document.getElementById('theme-select');
+        const pinBtn = document.getElementById('pin-btn');
+        const mainHeader = document.getElementById('main-header');
+        const sectionNav = document.getElementById('section-nav');
+        const customBuilder = document.getElementById('custom-builder');
+        const rootElements = document.documentElement;
+
+        let isRevealed = false;
+
+        function toggleAllLOs() {
+            isRevealed = !isRevealed;
+            const btn = document.getElementById('reveal-all-btn');
+            btn.textContent = isRevealed ? "Hide Learning Objectives" : "Show Learning Objectives";
+            
+            document.querySelectorAll('.lo-box').forEach(box => {
+                box.style.display = isRevealed ? 'block' : 'none';
+            });
+        }
+
+        function initQuiz() {
+            let currentSection = "";
+            let sectionIndex = 0;
+            
+            quizData.forEach((item, index) => {
+                if (item.section !== currentSection) {
+                    currentSection = item.section;
+                    
+                    const sectionId = 'sec-' + sectionIndex;
+                    
+                    const sectionHeader = document.createElement('h2');
+                    sectionHeader.className = 'section-header';
+                    sectionHeader.id = sectionId;
+                    sectionHeader.textContent = currentSection;
+                    quizRoot.appendChild(sectionHeader);
+
+                    const navBtn = document.createElement('button');
+                    let btnText = currentSection;
+                    if (btnText.includes("Female Reproductive Histology")) btnText = "Female Repro Histology";
+                    if (btnText.includes("Breast Histology")) btnText = "Breast Histology";
+                    if (btnText.includes("Lower Gynecologic Pathology")) btnText = "Lower GYN Path";
+                    if (btnText.includes("Female Reproductive Disorders")) btnText = "Female Repro Disorders";
+                    
+                    navBtn.textContent = btnText;
+                    navBtn.onclick = () => {
+                        document.getElementById(sectionId).scrollIntoView({ behavior: 'smooth' });
+                    };
+                    sectionNav.appendChild(navBtn);
+
+                    sectionIndex++;
+                }
+
+                const card = document.createElement('div');
+                card.className = 'question-card';
+                card.id = `q-card-${index}`;
+
+                const loBox = document.createElement('div');
+                loBox.className = 'lo-box';
+                loBox.id = `lo-${index}`;
+                loBox.innerHTML = item.fullLO;
+                card.appendChild(loBox);
+
+                const qText = document.createElement('div');
+                qText.className = 'question-text';
+                qText.innerHTML = `${index + 1}. ${item.question}`;
+                card.appendChild(qText);
+
+                const optionsGrid = document.createElement('div');
+                optionsGrid.className = 'options-grid';
+
+                for (const[key, value] of Object.entries(item.options)) {
+                    const label = document.createElement('label');
+                    label.className = 'option-label';
+                    
+                    const input = document.createElement('input');
+                    input.type = 'radio';
+                    input.name = `question-${index}`;
+                    input.value = key;
+
+                    const span = document.createElement('span');
+                    span.innerHTML = `${key}. ${value}`;
+
+                    label.appendChild(input);
+                    label.appendChild(span);
+                    optionsGrid.appendChild(label);
+                }
+                card.appendChild(optionsGrid);
+
+                const btn = document.createElement('button');
+                btn.className = 'btn-check';
+                btn.textContent = 'Check Answer';
+                btn.onclick = () => checkAnswer(index);
+                card.appendChild(btn);
+
+                const feedback = document.createElement('div');
+                feedback.className = 'feedback';
+                feedback.id = `feedback-${index}`;
+                card.appendChild(feedback);
+
+                quizRoot.appendChild(card);
+            });
+
+            const returnContainer = document.createElement('div');
+            returnContainer.style.textAlign = 'center';
+            returnContainer.style.marginTop = '2rem';
+            
+            const returnBtn = document.createElement('a');
+            returnBtn.href = 'https://ibecerramcg.github.io/GI-GU-ENDO-Practice-Quizzes/';
+            returnBtn.className = 'btn-link';
+            returnBtn.textContent = '← Return to Quiz Directory';
+            
+            returnContainer.appendChild(returnBtn);
+            quizRoot.appendChild(returnContainer);
+
+            const savedTheme = localStorage.getItem('quizTheme') || 'dark';
+            themeSelect.value = savedTheme;
+            changeTheme(savedTheme);
+
+            const savedPinState = localStorage.getItem('headerPinned');
+            toggleHeader(savedPinState !== 'false');
+        }
+
+        function checkAnswer(index) {
+            const selected = document.querySelector(`input[name="question-${index}"]:checked`);
+            const feedbackEl = document.getElementById(`feedback-${index}`);
+            const data = quizData[index];
+
+            if (!selected) {
+                alert("Please select an answer.");
+                return;
+            }
+
+            const isCorrect = selected.value === data.correctAnswer;
+            
+            let html = `<span class="feedback-header">${isCorrect ? "Correct!" : "Incorrect"}</span>`;
+            if (!isCorrect) {
+                html += `<div>The correct answer is <strong>${data.correctAnswer}</strong>.</div>`;
+            }
+            
+            html += `<div class="rationale"><strong>Rationale:</strong> ${data.rationale}</div>`;
+            html += `<div class="source"><strong>Source:</strong> ${data.source}</div>`;
+
+            feedbackEl.innerHTML = html;
+            feedbackEl.className = `feedback ${isCorrect ? 'correct' : 'incorrect'}`;
+            feedbackEl.style.display = 'block';
+            
+            const loBox = document.getElementById(`lo-${index}`);
+            loBox.style.display = 'block';
+        }
+
+        function changeTheme(themeName) {
+            localStorage.setItem('quizTheme', themeName);
+            
+            if (themeName === 'custom') {
+                rootElements.removeAttribute('data-theme');
+                customBuilder.classList.add('active');
+                loadCustomTheme();
+            } else {
+                rootElements.setAttribute('data-theme', themeName);
+                customBuilder.classList.remove('active');
+                rootElements.removeAttribute('style');
+            }
+        }
+
+        function updateCustomTheme() {
+            const bg = document.getElementById('color-bg').value;
+            const card = document.getElementById('color-card').value;
+            const text = document.getElementById('color-text').value;
+            const accent = document.getElementById('color-accent').value;
+
+            rootElements.style.setProperty('--bg-body', bg);
+            rootElements.style.setProperty('--bg-header', bg);
+            rootElements.style.setProperty('--bg-card', card);
+            rootElements.style.setProperty('--highlight-bg', card);
+            rootElements.style.setProperty('--text-main', text);
+            rootElements.style.setProperty('--text-accent', accent);
+            rootElements.style.setProperty('--button-bg', accent);
+            rootElements.style.setProperty('--button-text', bg);
+            rootElements.style.setProperty('--border-color', accent + '40');
+
+            const customColors = { bg, card, text, accent };
+            localStorage.setItem('customThemeColors', JSON.stringify(customColors));
+        }
+
+        function loadCustomTheme() {
+            const savedColors = JSON.parse(localStorage.getItem('customThemeColors'));
+            if (savedColors) {
+                document.getElementById('color-bg').value = savedColors.bg;
+                document.getElementById('color-card').value = savedColors.card;
+                document.getElementById('color-text').value = savedColors.text;
+                document.getElementById('color-accent').value = savedColors.accent;
+                updateCustomTheme();
+            } else {
+                updateCustomTheme();
+            }
+        }
+
+        function toggleHeader(forceState) {
+            const isCurrentlyPinned = !mainHeader.classList.contains('unpinned');
+            const newState = (typeof forceState === 'boolean') ? forceState : !isCurrentlyPinned;
+
+            if (newState) {
+                mainHeader.classList.remove('unpinned');
+                pinBtn.classList.add('pin-active');
+                localStorage.setItem('headerPinned', 'true');
+            } else {
+                mainHeader.classList.add('unpinned');
+                pinBtn.classList.remove('pin-active');
+                localStorage.setItem('headerPinned', 'false');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', initQuiz);
+
+    </script>
+</body>
+</html>
